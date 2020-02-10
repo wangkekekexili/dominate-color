@@ -9,6 +9,10 @@
     div.style.borderColor = "#333";
   }
 
+  function ondragleave() {
+    div.style.borderColor = "#aaa";
+  }
+
   function ondrop(event) {
     div.style.borderColor = "#aaa";
     const image = event.dataTransfer.files[0];
@@ -34,7 +38,7 @@
 <div
   bind:this={div}
   on:dragenter|preventDefault={ondragenter}
-  on:dragleave|preventDefault
+  on:dragleave|preventDefault={ondragleave}
   on:dragover|preventDefault
   on:drop|preventDefault={ondrop}>
   <p>Drop your image here.</p>
