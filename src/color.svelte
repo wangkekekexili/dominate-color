@@ -57,9 +57,51 @@
     );
   }
 
+  function getStandardDeviation(colors) {
+    const numColors = colors.length;
+
+    let totalR = 0;
+    let totalG = 0;
+    let totalB = 0;
+    colors.forEach(color => {
+      totalR += color.r;
+      totalG += color.g;
+      totalB += color.b;
+    });
+    let avgR = totalR / numColors;
+    let avgG = totalG / numColors;
+    let avgB = totalB / numColors;
+
+    let tempStdR = 0;
+    let tempStdG = 0;
+    let tempStdB = 0;
+    colors.forEach(color => {
+      tempStdR += (color.r - avgR) * (color.r - avgR);
+      tempStdG += (color.g - avgG) * (color.g - avgG);
+      tempStdB += (color.b - avgB) * (color.b - avgB);
+    });
+    let varR = tempStdR / numColors;
+    let varG = tempStdG / numColors;
+    let varB = tempStdB / numColors;
+
+    return (
+      (1 / 3) * (varR + varG + varB) +
+      (2 / 9) * (avgR * avgR + avgG * avgG + avgB * avgB) -
+      (2 / 9) * (avgR * avgG + avgG * avgB + avgB * avgR)
+    );
+  }
+
   export function getDominateColors(colors) {
-    // const bestOption = { totalStandardVariation: Infinity };
-    return kmeans(colors);
+    const bestOption = { totalStd: Infinity, groups: [] };
+    for (let i = 0; i != 4; i++) {
+      const groups = kmeans(colors);
+      const currentTotalStd = groups[0].std + groups[1].std + groups[2].std;
+      if (currentTotalStd < bestOption.totalStd) {
+        bestOption.groups = [groups[0].avg, groups[1].avg, groups[2].avg];
+        bestOption.totalStd = currentTotalStd;
+      }
+    }
+    return bestOption.groups;
   }
 
   function kmeans(colors) {
@@ -96,17 +138,15 @@
       const firstGroupNext = getAverageColor(firstGroup.data);
       const secondGroupNext = getAverageColor(secondGroup.data);
       const thirdGroupNext = getAverageColor(thirdGroup.data);
-      console.log(
-        firstGroupNext.toHex(),
-        secondGroupNext.toHex(),
-        thirdGroupNext.toHex()
-      );
       if (
         firstGroup.avg.equal(firstGroupNext) &&
         secondGroup.avg.equal(secondGroupNext) &&
         thirdGroup.avg.equal(thirdGroupNext)
       ) {
-        return [firstGroupNext, secondGroupNext, thirdGroupNext];
+        firstGroup.std = getStandardDeviation(firstGroup.data);
+        secondGroup.std = getStandardDeviation(secondGroup.data);
+        thirdGroup.std = getStandardDeviation(thirdGroup.data);
+        return [firstGroup, secondGroup, thirdGroup];
       } else {
         firstGroup = {
           avg: firstGroupNext,
