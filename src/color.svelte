@@ -84,16 +84,12 @@
     let varG = tempStdG / numColors;
     let varB = tempStdB / numColors;
 
-    return (
-      (1 / 3) * (varR + varG + varB) +
-      (2 / 9) * (avgR * avgR + avgG * avgG + avgB * avgB) -
-      (2 / 9) * (avgR * avgG + avgG * avgB + avgB * avgR)
-    );
+    return (1 / 3) * (varR + varG + varB);
   }
 
   export function getDominateColors(colors) {
     const bestOption = { totalStd: Infinity, groups: [] };
-    for (let i = 0; i != 4; i++) {
+    for (let i = 0; i != 5; i++) {
       const groups = kmeans(colors);
       const currentTotalStd = groups[0].std + groups[1].std + groups[2].std;
       if (currentTotalStd < bestOption.totalStd) {
@@ -124,14 +120,49 @@
         let dist1 = firstGroup.avg.distance(color);
         let dist2 = secondGroup.avg.distance(color);
         let dist3 = thirdGroup.avg.distance(color);
-        if (dist1 <= dist2 && dist1 <= dist3) {
+        if (dist1 < dist2 && dist1 < dist3) {
           firstGroup.data.push(color);
+          return;
         }
-        if (dist2 <= dist1 && dist2 <= dist3) {
+        if (dist2 < dist1 && dist2 < dist3) {
           secondGroup.data.push(color);
+          return;
         }
-        if (dist3 <= dist1 && dist3 <= dist2) {
+        if (dist3 < dist1 && dist3 < dist2) {
           thirdGroup.data.push(color);
+          return;
+        }
+        if (dist1 === dist2 && dist1 === dist3) {
+          const r = Math.floor(Math.random() * 3);
+          if (r === 0) {
+            firstGroup.data.push(color);
+          } else if (r === 1) {
+            secondGroup.data.push(color);
+          } else {
+            thirdGroup.data.push(color);
+          }
+        } else if (dist1 === dist2) {
+          const r = Math.floor(Math.random() * 2);
+          if (r === 0) {
+            firstGroup.data.push(color);
+          } else {
+            secondGroup.data.push(color);
+          }
+        } else if (dist1 === dist3) {
+          const r = Math.floor(Math.random() * 2);
+          if (r === 0) {
+            firstGroup.data.push(color);
+          } else {
+            thirdGroup.data.push(color);
+          }
+        } else {
+          // dist2 === dist3
+          const r = Math.floor(Math.random() * 2);
+          if (r === 0) {
+            secondGroup.data.push(color);
+          } else {
+            thirdGroup.data.push(color);
+          }
         }
       });
 
