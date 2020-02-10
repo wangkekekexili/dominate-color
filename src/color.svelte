@@ -18,7 +18,7 @@
     }
     let bStr = this.b.toString(16);
     if (bStr.length === 1) {
-      bStr = "0" + gStr;
+      bStr = "0" + bStr;
     }
     return `#${rStr}${gStr}${bStr}`;
   };

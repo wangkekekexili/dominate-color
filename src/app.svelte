@@ -32,7 +32,15 @@
         canvasImageDataToRGBArray(
           ctx.getImageData(0, 0, tempImg.width, tempImg.height).data
         )
-      );
+      ).sort((a, b) => {
+        if (a.r !== b.r) {
+          return a.r - b.r;
+        }
+        if (a.g !== b.g) {
+          return a.g - b.g;
+        }
+        return a.b - b.b;
+      });
       dominateColorsDiv.style.display = "block";
     });
     tempImg.src = imageURL;
