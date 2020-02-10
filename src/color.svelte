@@ -1,4 +1,28 @@
 <script context="module">
+  export function RGB(r, g, b) {
+    this.r = r;
+    this.g = g;
+    this.b = b;
+  }
+  RGB.prototype.toCSS = function() {
+    return `rgb(${this.r},${this.g},${this.b})`;
+  };
+  RGB.prototype.toHex = function() {
+    let rStr = this.r.toString(16);
+    if (rStr.length === 1) {
+      rStr = "0" + rStr;
+    }
+    let gStr = this.g.toString(16);
+    if (gStr.length === 1) {
+      gStr = "0" + gStr;
+    }
+    let bStr = this.b.toString(16);
+    if (bStr.length === 1) {
+      bStr = "0" + gStr;
+    }
+    return `#${rStr}${gStr}${bStr}`;
+  };
+
   export function canvasImageDataToRGBArray(data) {
     const rgbs = [];
     for (let i = 0; i < data.length; i += 4) {

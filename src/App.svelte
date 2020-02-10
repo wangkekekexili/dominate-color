@@ -1,6 +1,11 @@
 <script>
   import { onMount } from "svelte";
-  import { canvasImageDataToRGBArray, getAverageColor } from "./color.svelte";
+  import {
+    RGB,
+    canvasImageDataToRGBArray,
+    getAverageColor
+  } from "./color.svelte";
+  import DominatColorDiv from "./dominate-color-div.svelte";
 
   let input;
   let c;
@@ -30,6 +35,7 @@
 </script>
 
 <input bind:this={input} type="file" accept="image/*" />
-<div style="height: 10px;">
-  <canvas bind:this={c} />
-</div>
+<!-- <div style="height: 10px;"> -->
+<!-- <canvas bind:this={c} /> -->
+<!-- </div> -->
+<DominatColorDiv backgroundColor={new RGB(0, 255, 100)} />
