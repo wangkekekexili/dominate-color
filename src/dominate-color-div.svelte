@@ -1,16 +1,8 @@
 <script>
-  import { onMount } from "svelte";
   import { pasteToClipboard } from "./paste-to-clipboard.svelte";
+  import { RGB } from "./color.svelte";
 
-  export let backgroundColor;
-
-  let div;
-  let span;
-
-  onMount(function() {
-    div.style.backgroundColor = backgroundColor.toCSS();
-    span.innerText = backgroundColor.toHex();
-  });
+  export let backgroundColor = new RGB(0, 0, 0);
 
   function pasteHexToClipboard() {
     pasteToClipboard(backgroundColor.toHex());
@@ -28,12 +20,13 @@
 
   span {
     font-family: monospace;
+    mix-blend-mode: normal;
   }
 </style>
 
 <div
-  bind:this={div}
+  style="background-color: {backgroundColor.toCSS()}"
   on:dblclick|preventDefault={pasteHexToClipboard}
   on:selectstart|preventDefault>
-  <span bind:this={span} />
+  <span>{backgroundColor.toHex()}</span>
 </div>

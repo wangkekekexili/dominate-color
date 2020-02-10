@@ -22,15 +22,21 @@
     }
     return `#${rStr}${gStr}${bStr}`;
   };
+  RGB.prototype.equal = function(other) {
+    return this.r === other.r && this.g === other.g && this.b === other.b;
+  };
+  RGB.prototype.distance = function(other) {
+    return Math.sqrt(
+      (this.r - other.r) * (this.r - other.r) +
+        (this.g - other.g) * (this.g - other.g) +
+        (this.b - other.b) * (this.b - other.b)
+    );
+  };
 
   export function canvasImageDataToRGBArray(data) {
     const rgbs = [];
     for (let i = 0; i < data.length; i += 4) {
-      rgbs.push({
-        r: data[i],
-        g: data[i + 1],
-        b: data[i + 2]
-      });
+      rgbs.push(new RGB(data[i], data[i + 1], data[i + 2]));
     }
     return rgbs;
   }
@@ -40,14 +46,81 @@
     let totalG = 0;
     let totalB = 0;
     colors.forEach(color => {
-      totalR += color.r * color.r;
-      totalG += color.g * color.g;
-      totalB += color.b * color.b;
+      totalR += color.r;
+      totalG += color.g;
+      totalB += color.b;
     });
-    return {
-      r: Math.floor(Math.sqrt(totalR / colors.length)),
-      g: Math.floor(Math.sqrt(totalG / colors.length)),
-      b: Math.floor(Math.sqrt(totalB / colors.length))
+    return new RGB(
+      Math.floor(totalR / colors.length),
+      Math.floor(totalG / colors.length),
+      Math.floor(totalB / colors.length)
+    );
+  }
+
+  export function getDominateColors(colors) {
+    // const bestOption = { totalStandardVariation: Infinity };
+    return kmeans(colors);
+  }
+
+  function kmeans(colors) {
+    const numColors = colors.length;
+    let firstGroup = {
+      avg: colors[Math.floor(Math.random() * numColors)],
+      data: []
     };
+    let secondGroup = {
+      avg: colors[Math.floor(Math.random() * numColors)],
+      data: []
+    };
+    let thirdGroup = {
+      avg: colors[Math.floor(Math.random() * numColors)],
+      data: []
+    };
+
+    while (true) {
+      colors.forEach(color => {
+        let dist1 = firstGroup.avg.distance(color);
+        let dist2 = secondGroup.avg.distance(color);
+        let dist3 = thirdGroup.avg.distance(color);
+        if (dist1 <= dist2 && dist1 <= dist3) {
+          firstGroup.data.push(color);
+        }
+        if (dist2 <= dist1 && dist2 <= dist3) {
+          secondGroup.data.push(color);
+        }
+        if (dist3 <= dist1 && dist3 <= dist2) {
+          thirdGroup.data.push(color);
+        }
+      });
+
+      const firstGroupNext = getAverageColor(firstGroup.data);
+      const secondGroupNext = getAverageColor(secondGroup.data);
+      const thirdGroupNext = getAverageColor(thirdGroup.data);
+      console.log(
+        firstGroupNext.toHex(),
+        secondGroupNext.toHex(),
+        thirdGroupNext.toHex()
+      );
+      if (
+        firstGroup.avg.equal(firstGroupNext) &&
+        secondGroup.avg.equal(secondGroupNext) &&
+        thirdGroup.avg.equal(thirdGroupNext)
+      ) {
+        return [firstGroupNext, secondGroupNext, thirdGroupNext];
+      } else {
+        firstGroup = {
+          avg: firstGroupNext,
+          data: []
+        };
+        secondGroup = {
+          avg: secondGroupNext,
+          data: []
+        };
+        thirdGroup = {
+          avg: thirdGroupNext,
+          data: []
+        };
+      }
+    }
   }
 </script>

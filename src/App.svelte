@@ -1,41 +1,84 @@
 <script>
-  import { onMount } from "svelte";
   import {
     RGB,
     canvasImageDataToRGBArray,
-    getAverageColor
+    getDominateColors
   } from "./color.svelte";
   import DominatColorDiv from "./dominate-color-div.svelte";
+  import DragAndDrop from "./drag-and-drop.svelte";
 
-  let input;
-  let c;
+  let displayImage;
+  let dominateColorsDiv;
 
-  onMount(function() {
-    input.addEventListener("change", function() {
-      const image = input.files[0];
-      const imageURL = URL.createObjectURL(image);
+  let first;
+  let second;
+  let third;
 
-      const i = new Image();
-      i.addEventListener("load", function() {
-        c.width = i.width;
-        c.height = i.height;
-        const ctx = c.getContext("2d");
-        ctx.drawImage(i, 0, 0);
-        const averageColor = getAverageColor(
-          canvasImageDataToRGBArray(
-            ctx.getImageData(0, 0, i.width, i.height).data
-          )
-        );
-        const body = document.querySelector("body");
-        body.style.backgroundColor = `rgba(${averageColor.r},${averageColor.g},${averageColor.b},1)`;
-      });
-      i.src = imageURL;
+  function onImageDropped(event) {
+    displayImage.parentNode.style.display = "block";
+
+    const image = event.detail.image;
+    const imageURL = URL.createObjectURL(image);
+    displayImage.src = imageURL;
+
+    const tempImg = new Image();
+    tempImg.addEventListener("load", function() {
+      const c = document.createElement("canvas");
+      c.width = tempImg.width;
+      c.height = tempImg.height;
+      const ctx = c.getContext("2d");
+      ctx.drawImage(tempImg, 0, 0);
+      [first, second, third] = getDominateColors(
+        canvasImageDataToRGBArray(
+          ctx.getImageData(0, 0, tempImg.width, tempImg.height).data
+        )
+      );
+      dominateColorsDiv.style.display = "block";
     });
-  });
+    tempImg.src = imageURL;
+  }
 </script>
 
-<input bind:this={input} type="file" accept="image/*" />
-<!-- <div style="height: 10px;"> -->
-<!-- <canvas bind:this={c} /> -->
-<!-- </div> -->
-<DominatColorDiv backgroundColor={new RGB(0, 255, 100)} />
+<style>
+  .display-image {
+    width: 60%;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 16px;
+    margin-bottom: 16px;
+    display: none;
+  }
+
+  .display-image img {
+    width: 100%;
+  }
+
+  .dominate-colors {
+    width: 60%;
+    margin-left: auto;
+    margin-right: auto;
+    display: none;
+  }
+
+  .dominate-colors div {
+    display: flex;
+    justify-content: center;
+    margin-top: 8px;
+  }
+</style>
+
+<DragAndDrop on:imageDropped={onImageDropped} />
+<div class="display-image">
+  <img bind:this={displayImage} />
+</div>
+<div class="dominate-colors" bind:this={dominateColorsDiv}>
+  <div class="dominate-colors-first">
+    <DominatColorDiv backgroundColor={first} />
+  </div>
+  <div class="dominate-colors-second">
+    <DominatColorDiv backgroundColor={second} />
+  </div>
+  <div class="dominate-colors-third">
+    <DominatColorDiv backgroundColor={third} />
+  </div>
+</div>
