@@ -1,5 +1,6 @@
 <script>
   import { onMount } from "svelte";
+  import { pasteToClipboard } from "./paste-to-clipboard.svelte";
 
   export let backgroundColor;
 
@@ -12,13 +13,7 @@
   });
 
   function pasteHexToClipboard() {
-    const tempTextInput = document.createElement("input");
-    tempTextInput.type = "text";
-    document.body.appendChild(tempTextInput);
-    tempTextInput.value = backgroundColor.toHex();
-    tempTextInput.select();
-    document.execCommand("copy");
-    document.body.removeChild(tempTextInput);
+    pasteToClipboard(backgroundColor.toHex());
   }
 </script>
 
