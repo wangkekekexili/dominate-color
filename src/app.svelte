@@ -75,6 +75,12 @@
   }
 </style>
 
+<svelte:body
+  on:dragenter|preventDefault
+  on:dragleave|preventDefault
+  on:dragover|preventDefault
+  on:drop|preventDefault />
+
 <DragAndDrop on:imageDropped={onImageDropped} />
 <div class="display-image">
   <img bind:this={displayImage} />

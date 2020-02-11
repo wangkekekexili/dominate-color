@@ -5,15 +5,23 @@
 
   let div;
 
-  function ondragenter() {
+  let dragStates = [];
+
+  function ondragenter(event) {
+    dragStates.push(event.target);
     div.style.borderColor = "#333";
+    div.style.cursor = "copy";
   }
 
-  function ondragleave() {
-    div.style.borderColor = "#aaa";
+  function ondragleave(event) {
+    dragStates.pop();
+    if (dragStates.length === 0) {
+      div.style.borderColor = "#aaa";
+    }
   }
 
   function ondrop(event) {
+    dragStates = [];
     div.style.borderColor = "#aaa";
     const image = event.dataTransfer.files[0];
     dispatch("imageDropped", { image });
