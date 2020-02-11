@@ -24,13 +24,19 @@
     const tempImg = new Image();
     tempImg.addEventListener("load", function() {
       const c = document.createElement("canvas");
-      c.width = tempImg.width;
-      c.height = tempImg.height;
+
+      let scale = 1;
+      if (tempImg.width > 512) {
+        scale = 512 / tempImg.width;
+      }
+      c.width = Math.floor(tempImg.width * scale);
+      c.height = Math.floor(tempImg.height * scale);
       const ctx = c.getContext("2d");
+      ctx.scale(scale, scale);
       ctx.drawImage(tempImg, 0, 0);
       [first, second, third] = getDominateColors(
         canvasImageDataToRGBArray(
-          ctx.getImageData(0, 0, tempImg.width, tempImg.height).data
+          ctx.getImageData(0, 0, c.width, c.height).data
         )
       ).sort((a, b) => {
         if (a.r !== b.r) {

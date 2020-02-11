@@ -53,6 +53,10 @@
     margin-top: 32px;
     margin-bottom: 16px;
   }
+
+  p {
+    line-height: 1.5;
+  }
 </style>
 
 <div
@@ -61,5 +65,9 @@
   on:dragleave|preventDefault={ondragleave}
   on:dragover|preventDefault
   on:drop|preventDefault={ondrop}>
-  <p bind:this={p}>Drop your image here.</p>
+  <p bind:this={p}>
+    Drop your image here.
+    <br />
+    It may take up to 10 seconds.
+  </p>
 </div>
