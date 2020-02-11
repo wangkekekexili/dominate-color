@@ -3,6 +3,15 @@
   import { RGB } from "./color.svelte";
 
   export let backgroundColor = new RGB(0, 0, 0);
+  let fontColor = "#222";
+  $: {
+    debugger;
+    if (backgroundColor.luminance > 75) {
+      fontColor = "#222";
+    } else {
+      fontColor = "#ccc";
+    }
+  }
 
   function pasteHexToClipboard() {
     pasteToClipboard(backgroundColor.toHex());
@@ -28,5 +37,5 @@
   style="background-color: {backgroundColor.toCSS()}"
   on:dblclick|preventDefault={pasteHexToClipboard}
   on:selectstart|preventDefault>
-  <span>{backgroundColor.toHex()}</span>
+  <span style="color:{fontColor}">{backgroundColor.toHex()}</span>
 </div>

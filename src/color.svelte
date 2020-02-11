@@ -3,6 +3,12 @@
     this.r = r;
     this.g = g;
     this.b = b;
+    Object.defineProperty(this, "luminance", {
+      // https://www.w3.org/TR/AERT/#color-contrast
+      get() {
+        return 0.299 * this.r + 0.587 * this.g + 0.114 * this.b;
+      }
+    });
   }
   RGB.prototype.toCSS = function() {
     return `rgb(${this.r},${this.g},${this.b})`;
