@@ -5,7 +5,6 @@
   export let backgroundColor = new RGB(0, 0, 0);
   let fontColor = "#222";
   $: {
-    debugger;
     if (backgroundColor.luminance > 75) {
       fontColor = "#222";
     } else {
