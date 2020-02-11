@@ -4,13 +4,16 @@
   const dispatch = createEventDispatcher();
 
   let div;
+  let p;
 
   let dragStates = [];
 
   function ondragenter(event) {
     dragStates.push(event.target);
     div.style.borderColor = "#333";
-    div.style.cursor = "copy";
+    if (event.dataTransfer.items.length > 1) {
+      p.innerText = "Only one image is allowed.";
+    }
   }
 
   function ondragleave(event) {
@@ -23,8 +26,17 @@
   function ondrop(event) {
     dragStates = [];
     div.style.borderColor = "#aaa";
-    const image = event.dataTransfer.files[0];
-    dispatch("imageDropped", { image });
+    if (event.dataTransfer.files.length > 1) {
+      p.innerText = "Only one image is allowed.";
+      return;
+    }
+    const file = event.dataTransfer.files[0];
+    if (file.type.startsWith("image/")) {
+      dispatch("imageDropped", { image: file });
+      p.innerText = "Drop your image here.";
+    } else {
+      p.innerText = "Only an image is allowed.";
+    }
   }
 </script>
 
@@ -49,5 +61,5 @@
   on:dragleave|preventDefault={ondragleave}
   on:dragover|preventDefault
   on:drop|preventDefault={ondrop}>
-  <p>Drop your image here.</p>
+  <p bind:this={p}>Drop your image here.</p>
 </div>
